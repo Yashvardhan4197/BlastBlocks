@@ -8,15 +8,16 @@ public class BoxService
     private List<Transform> boxPointPositions;
     private Dictionary<Transform, List<BoxController>> instantiatedBoxes;
     public BoxPool BoxPool { get { return boxPool; } }
-    public BoxService(List<Transform> boxPointPostions,BoxView boxPrefab,Transform boxParentTransform)
+    public BoxService(BoxView boxPrefab,Transform boxParentTransform)
     {
-        this.boxPointPositions = boxPointPostions;
+        //this.boxPointPositions = boxPointPostions;
         boxPool = new BoxPool(boxPrefab,boxParentTransform);
         instantiatedBoxes=new Dictionary<Transform, List<BoxController>>();
     }
 
     private void InitalizeBoxDict()
     {
+        boxPointPositions = GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].BoxPositionTransform;
         for(int i=0;i<boxPointPositions.Count;i++)
         {
             instantiatedBoxes.Add(boxPointPositions[i],new List<BoxController>());
@@ -39,22 +40,22 @@ public class BoxService
         for (int i=0;i< boxPointPositions.Count; i++)
         {
             //change value later
-            for(int j=0;j<GameService.Instance.LevelDataSO.Columns;j++)
+            for(int j = 0; j < GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Columns;j++)
             {
                 float currPosZ = boxPointPositions[i].position.z + j*1.1f;
                 BoxController newBox = boxPool.GetPooledItem();
                 newBox.ActivateBox(new Vector3(boxPointPositions[i].position.x,boxPointPositions[i].position.y,currPosZ));
                 instantiatedBoxes[boxPointPositions[i]].Add(newBox);
                 newBox.GetBoxMaterial().material.SetColor("_Color",Color.blue);
-                if (GameService.Instance.LevelDataSO.Layout[j].ID[i] == 0)
+                if (GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Layout[j].ID[i] == 0)
                 {
                     newBox.GetBoxMaterial().material.SetColor("_Color", Color.red);
                     newBox.SetColorID(0);
-                }else if(GameService.Instance.LevelDataSO.Layout[j].ID[i] == 1)
+                }else if(GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Layout[j].ID[i] == 1)
                 {
                     newBox.GetBoxMaterial().material.SetColor("_Color", Color.green);
                     newBox.SetColorID(1);
-                }else if(GameService.Instance.LevelDataSO.Layout[j].ID[i] == 2)
+                }else if(GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Layout[j].ID[i] == 2)
                 {
                     newBox.GetBoxMaterial().material.SetColor("_Color", Color.blue);
                     newBox.SetColorID(2);

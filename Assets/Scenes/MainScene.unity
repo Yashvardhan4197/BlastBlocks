@@ -170,7 +170,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boxPrefab: {fileID: 8887914813049518880, guid: b1c8e733bc52fbb4484aced7c551fa85, type: 3}
   boxParentTransform: {fileID: 1377536199}
-  levelData: {fileID: 11400000, guid: b88d9ccde3303894f850bda28222d5c5, type: 2}
+  levelData:
+  - {fileID: 11400000, guid: b88d9ccde3303894f850bda28222d5c5, type: 2}
 --- !u!1 &167283576
 GameObject:
   m_ObjectHideFlags: 0

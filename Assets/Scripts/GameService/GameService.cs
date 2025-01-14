@@ -26,15 +26,19 @@ public class GameService : MonoBehaviour
     //DATA
     [SerializeField] BoxView boxPrefab;
     [SerializeField] Transform boxParentTransform;
-    [SerializeField] LevelDataSO levelData; //change later to list
+    [SerializeField] List<LevelDataSO> levelData; //change later to list
     //Services
     private BoxService boxService;
+    private LevelService levelService;
     public BoxService BoxService { get { return boxService; } }
-    public LevelDataSO LevelDataSO { get { return levelData; } }
+    public LevelService LevelService { get { return levelService; } }
+    public List<LevelDataSO> LevelDataSO { get { return levelData; } }
 
     private void Init()
     {
-        boxService =new BoxService(levelData.BoxPositionTransform,boxPrefab,boxParentTransform);
+        levelService= new LevelService();
+        boxService =new BoxService(boxPrefab,boxParentTransform);
+        //change to button click later
         boxService.OnGameStart();
     }
 
