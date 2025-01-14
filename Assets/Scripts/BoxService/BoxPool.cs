@@ -16,17 +16,17 @@ public class BoxPool
     private BoxController CreatePooledItem()
     {
         PooledItem item = new PooledItem();
-        item.enemyController = new BoxController(boxPrefab,boxParentTransform);
+        item.boxController = new BoxController(boxPrefab,boxParentTransform);
         item.isUsed = true;
         pooledItems.Add(item);
-        return item.enemyController;
+        return item.boxController;
     }
 
     public void OnGameStart()
     {
         foreach (var item in pooledItems)
         {
-            item.enemyController.ReturnToPool();
+            item.boxController.ReturnToPool();
         }
     }
 
@@ -36,14 +36,14 @@ public class BoxPool
         if (item != null)
         {
             item.isUsed = true;
-            return item.enemyController;
+            return item.boxController;
         }
         return CreatePooledItem();
     }
 
-    public void ReturnToPool(BoxController enemyController)
+    public void ReturnToPool(BoxController boxController)
     {
-        PooledItem item = pooledItems.Find(item => item.enemyController == enemyController);
+        PooledItem item = pooledItems.Find(item => item.boxController == boxController);
         if (item != null)
         {
             item.isUsed = false;
@@ -52,7 +52,7 @@ public class BoxPool
 
     public class PooledItem
     {
-        public BoxController enemyController;
+        public BoxController boxController;
         public bool isUsed;
     }
 }

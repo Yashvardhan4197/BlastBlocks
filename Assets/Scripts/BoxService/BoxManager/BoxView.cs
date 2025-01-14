@@ -4,11 +4,11 @@ public class BoxView: MonoBehaviour
 {
     private BoxController boxController;
     [SerializeField] Color color;
-    [SerializeField] int colorID;
-
-
+    [SerializeField] Renderer material;
+    public Renderer Material { get { return material; } }   
     public void SetController(BoxController boxController)
     {
         this.boxController = boxController;
     }
+
 }
