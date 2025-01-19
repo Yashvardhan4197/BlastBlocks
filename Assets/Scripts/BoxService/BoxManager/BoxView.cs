@@ -11,4 +11,5 @@ public class BoxView: MonoBehaviour
         this.boxController = boxController;
     }
 
+
 }

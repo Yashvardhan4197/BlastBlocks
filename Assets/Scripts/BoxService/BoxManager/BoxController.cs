@@ -48,6 +48,11 @@ public class BoxController
         return colorID;
     }
 
+    public Transform GetTransform()
+    {
+        return boxView?.transform;
+    }
+
 
 }
 

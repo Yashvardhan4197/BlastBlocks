@@ -18,7 +18,10 @@ public class LevelDataEditor: Editor
         EditorGUILayout.Space();
 
         DrawGrid();
-
+        if (GUI.changed)
+        {
+            EditorUtility.SetDirty(levelData);
+        }
     }
 
     private void DrawGrid()

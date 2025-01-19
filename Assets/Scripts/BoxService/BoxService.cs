@@ -106,5 +106,39 @@ public class BoxService
             instantiatedBoxes[boxSpawnPoint][i].SetPosition(new Vector3(boxSpawnPoint.position.x, boxSpawnPoint.position.y, boxSpawnPoint.position.z+i));
         }
     }
+
+
+    public List<BoxController> GetFirstBoxesList(int colorID)
+    {
+        List<BoxController>firstBoxList= new List<BoxController>();
+        foreach(var box in instantiatedBoxes.Values)
+        {
+            if (box.Count>0)
+            {
+                if (box[0].CheckColorID(colorID))
+                {
+                    firstBoxList.Add(box[0]);
+                }
+            }
+        }
+        return firstBoxList;
+    }
+
+
+    public void DestroyFirstBox(BoxController boxController)
+    {
+        foreach(var box in instantiatedBoxes.Keys)
+        {
+            if (instantiatedBoxes[box].Count > 0)
+            {
+                if (instantiatedBoxes[box][0] == boxController)
+                {
+                    DestroyFirstBlock(box);
+                    return;
+                }
+            }
+        }
+    }
+
 }
 
