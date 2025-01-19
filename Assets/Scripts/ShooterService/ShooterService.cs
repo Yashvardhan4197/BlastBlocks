@@ -1,7 +1,5 @@
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 
 public class ShooterService: MonoBehaviour
@@ -76,11 +74,8 @@ public class ShooterService: MonoBehaviour
             }
             else
             {
-                if (activeShootersAtTargetPosition.Count > currentActiveShooterIndex + 1)
-                {
-                    activeShooter = activeShootersAtTargetPosition[currentActiveShooterIndex + 1];
-                    currentActiveShooterIndex=currentActiveShooterIndex+1;
-                }
+                currentActiveShooterIndex = (currentActiveShooterIndex + 1)%activeShootersAtTargetPosition.Count;
+                activeShooter = activeShootersAtTargetPosition[currentActiveShooterIndex];
             }
         }
         shootersToRemove.Clear();
