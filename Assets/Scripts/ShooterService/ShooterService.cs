@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class ShooterService: MonoBehaviour
 {
-
-
-
     [SerializeField] List<ShooterManager> shootersList;
     [SerializeField] List<Transform> shooterPositions;
     [SerializeField] Transform firstShooterPos;
@@ -16,12 +13,12 @@ public class ShooterService: MonoBehaviour
     [SerializeField] float shootInterval;
     private Dictionary<Transform, bool> positionStatus;
     private List<ShooterManager> activeShootersAtTargetPosition;
+    private ShooterManager activeShooter;
     private float shootTimer;
-
+    private int currentActiveShooterIndex;
 
     private void Awake()
     {
-        //positionsToMove = new Stack<Transform>();
         positionStatus = new Dictionary<Transform, bool>();
         activeShootersAtTargetPosition = new List<ShooterManager>();
         foreach (var shooter in shooterPositions)
@@ -29,6 +26,7 @@ public class ShooterService: MonoBehaviour
             positionStatus[shooter] = false;
         }
     }
+
     private void Start()
     {
         OnGameStart();
@@ -41,7 +39,6 @@ public class ShooterService: MonoBehaviour
         shootTimer = 0f;
         ResetStartingPositions();
     }
-
 
     private void Update()
     {
@@ -56,6 +53,11 @@ public class ShooterService: MonoBehaviour
                 {
                     shootersToRemove.Add(shooter);
                     activeShootersAtTargetPosition.Add(shooter);
+                    if(activeShootersAtTargetPosition.Count==1)
+                    {
+                        activeShooter = activeShootersAtTargetPosition[0];
+                        currentActiveShooterIndex = 0;
+                    }
                 }
 
             }
@@ -66,30 +68,70 @@ public class ShooterService: MonoBehaviour
             ResetStartingPositions();
             SetShootersClickableStatus();
         }
-        foreach (var shooter in activeShootersAtTargetPosition)
+        if(activeShooter!=null)
         {
-            HandleShooting(shooter);
+            if (GameService.Instance.BoxService.CheckEachFirstBox((int)activeShooter.ColorID))
+            {
+                HandleShooting(activeShooter);
+            }
+            else
+            {
+                if (activeShootersAtTargetPosition.Count > currentActiveShooterIndex + 1)
+                {
+                    activeShooter = activeShootersAtTargetPosition[currentActiveShooterIndex + 1];
+                    currentActiveShooterIndex=currentActiveShooterIndex+1;
+                }
+            }
         }
         shootersToRemove.Clear();
-        foreach(var shooter in activeShootersAtTargetPosition)
+        if(activeShooter!=null)
         {
-            if(shooter.CurrentBullets<=0)
+            if(activeShooter.CurrentBullets<=0)
             {
-                shootersToRemove.Add(shooter);
-                positionStatus[shooter.TargetShooterPosition] = false;
-                shooter.SetIsAtShootingPosition(false);
-                shooter.UpdateBullets(0);
-                shooter.SetTargetShootingPosition(null);
+                shootersToRemove.Add(activeShooter);
+                positionStatus[activeShooter.TargetShooterPosition] = false;
+                activeShooter.SetIsAtShootingPosition(false);
+                activeShooter.UpdateBullets(0);
+                activeShooter.SetTargetShootingPosition(null);
                 SetShootersClickableStatus();
-                shooter.gameObject.SetActive(false);
+                activeShooter.gameObject.SetActive(false);
             }
         }
         foreach(var shooter in shootersToRemove)
         {
             activeShootersAtTargetPosition.Remove(shooter);
+            if (activeShootersAtTargetPosition.Count > 0)
+            {
+                activeShooter = activeShootersAtTargetPosition[0];
+                currentActiveShooterIndex = 0;
+            }
         }
 
+        CheckForGameLossStatus();
+    }
 
+    private void CheckForGameLossStatus()
+    {
+        if(activeShootersAtTargetPosition.Count==shooterPositions.Count)
+        {
+            bool checkColor = true;
+            foreach(var item in  activeShootersAtTargetPosition)
+            {
+                if(GameService.Instance.BoxService.CheckEachFirstBox((int)item.ColorID)==false)
+                {
+                    checkColor = false;
+                }
+                else
+                {
+                    checkColor = true;
+                    break;
+                }
+            }
+            if(!checkColor)
+            {
+                Debug.Log("GAME LOST");
+            }
+        }
     }
 
     private void ResetStartingPositions()
@@ -107,20 +149,10 @@ public class ShooterService: MonoBehaviour
         }
     }
 
-
     public void SetShootersClickableStatus()
     {
         for(int i=0;i<shootersList.Count;i++)
         {
-            /*
-            if (i == 0)
-            {
-                shootersList[i].SetIsClickable(true);
-            }
-            else
-            {
-                shootersList[i].SetIsClickable(false);
-            }*/
             shootersList[i].SetIsClickable(true);
             shootersList[i].SetShooterService(this);
         }
@@ -139,7 +171,6 @@ public class ShooterService: MonoBehaviour
             }
         }
     }
-
 
     private void MoveToShootingPosition(ShooterManager shooter)
     {
@@ -166,12 +197,12 @@ public class ShooterService: MonoBehaviour
     {
         BoxColorID colorID =shooter.ColorID;
         List<BoxController> list = GameService.Instance.BoxService.GetFirstBoxesList((int)colorID) ;
-        foreach(var box in list)
+        if (list.Count > 0)
         {
-             BulletView newBullet=Instantiate(BulletPrefab);
-             newBullet.transform.position=shooter.MuzzleTransform.position;
-             newBullet.SetDestination(box.GetTransform().position, colorID,box);
-             shooter.UpdateBullets(shooter.CurrentBullets - 1);
+            BulletView newBullet = Instantiate(BulletPrefab);
+            newBullet.transform.position = shooter.MuzzleTransform.position;
+            newBullet.SetDestination(list[0].GetTransform().position, colorID, list[0]);
+            shooter.UpdateBullets(shooter.CurrentBullets - 1);
         }
     }
 }

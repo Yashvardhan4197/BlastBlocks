@@ -10,7 +10,6 @@ public class BoxService
     public BoxPool BoxPool { get { return boxPool; } }
     public BoxService(BoxView boxPrefab,Transform boxParentTransform)
     {
-        //this.boxPointPositions = boxPointPostions;
         boxPool = new BoxPool(boxPrefab,boxParentTransform);
         instantiatedBoxes=new Dictionary<Transform, List<BoxController>>();
     }
@@ -39,7 +38,6 @@ public class BoxService
     {
         for (int i=0;i< boxPointPositions.Count; i++)
         {
-            //change value later
             for(int j = 0; j < GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Columns;j++)
             {
                 float currPosZ = boxPointPositions[i].position.z + j*1.1f;
@@ -64,32 +62,22 @@ public class BoxService
         }
     }
 
-    public void CheckEachFirstBox(int colorID)
+    public bool CheckEachFirstBox(int colorID)
     {
-        bool checkEmpty = true;
         bool checkColorIDMatch = false;
         foreach(var item in  instantiatedBoxes.Keys)
         {
             if (instantiatedBoxes[item].Count>0&&instantiatedBoxes[item][0].CheckColorID(colorID))
             {
                 checkColorIDMatch = true;
-                DestroyFirstBlock(item);
             }
 
-            if (instantiatedBoxes[item].Count>0)
-            {
-                checkEmpty = false;
-            }
         }
-        if(checkEmpty)
+        if(checkColorIDMatch==true)
         {
-            Debug.Log("GAME WON");
-            return;
+            return true;
         }
-        if(checkColorIDMatch==false)
-        {
-            Debug.Log("GAME LOST");
-        }
+        return false;
     }
 
     private void DestroyFirstBlock(Transform item)
@@ -134,11 +122,35 @@ public class BoxService
                 if (instantiatedBoxes[box][0] == boxController)
                 {
                     DestroyFirstBlock(box);
-                    return;
+                    break;
                 }
             }
         }
+
+        bool checkEmpty = false;
+        foreach (var item in instantiatedBoxes.Keys)
+        {
+            Debug.Log(instantiatedBoxes[item].Count);
+            if (instantiatedBoxes[item].Count <= 0)
+            {
+                
+                checkEmpty = true;
+            }
+
+            if (instantiatedBoxes[item].Count > 0)
+            {
+                checkEmpty = false;
+                break;
+            }
+        }
+        if (checkEmpty)
+        {
+            Debug.Log("GAME WON");
+            return;
+        }
+
     }
+
 
 }
 
