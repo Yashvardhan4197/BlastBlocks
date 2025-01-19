@@ -168,6 +168,7 @@ MonoBehaviour:
   boxParentTransform: {fileID: 1377536199}
   levelData:
   - {fileID: 11400000, guid: b88d9ccde3303894f850bda28222d5c5, type: 2}
+  - {fileID: 11400000, guid: f6ae480b55727994da37eeea104c29b7, type: 2}
 --- !u!1001 &19487199
 PrefabInstance:
   m_ObjectHideFlags: 0
