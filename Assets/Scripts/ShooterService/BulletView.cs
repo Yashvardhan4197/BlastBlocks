@@ -33,7 +33,7 @@ public class BulletView: MonoBehaviour
         //return toPool;
         isMoving = false;
         GameService.Instance.BoxService.DestroyFirstBox(targetBoxController);
-        Handheld.Vibrate();
+        //Handheld.Vibrate();
         Destroy(this.gameObject);
     }
 
