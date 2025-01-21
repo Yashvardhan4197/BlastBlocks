@@ -2185,7 +2185,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6703757849550131652, guid: 963dfcd9bb607a54a9d84d5bb80b3995, type: 3}
       propertyPath: levelData.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6703757849550131652, guid: 963dfcd9bb607a54a9d84d5bb80b3995, type: 3}
       propertyPath: 'levelData.Array.data[2]'
@@ -2195,6 +2195,10 @@ PrefabInstance:
       propertyPath: 'levelData.Array.data[3]'
       value: 
       objectReference: {fileID: 11400000, guid: 32374e9ea01222f42a54329ac73c20c3, type: 2}
+    - target: {fileID: 6703757849550131652, guid: 963dfcd9bb607a54a9d84d5bb80b3995, type: 3}
+      propertyPath: 'levelData.Array.data[4]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 24c3ceeb0d1576d43abd172dda1dd670, type: 2}
     - target: {fileID: 9085301335711215923, guid: 963dfcd9bb607a54a9d84d5bb80b3995, type: 3}
       propertyPath: m_Name
       value: GameService

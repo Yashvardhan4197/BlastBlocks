@@ -10,7 +10,7 @@ public class LevelService
 
     public void LoadScene(int level)
     {
-        if (level > SceneManager.sceneCountInBuildSettings+1)
+        if (level >= SceneManager.sceneCountInBuildSettings)
         {
             Debug.Log("CurrentLevel: " + level);
             Debug.Log("totalScenes: "+ SceneManager.sceneCountInBuildSettings);
