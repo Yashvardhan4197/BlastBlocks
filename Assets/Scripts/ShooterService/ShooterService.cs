@@ -16,6 +16,7 @@ public class ShooterService: MonoBehaviour
     private float shootTimer;
     private int currentActiveShooterIndex;
     private bool isGameWon;
+    private bool isGameLost;
     private void Awake()
     {
         positionStatus = new Dictionary<Transform, bool>();
@@ -37,6 +38,7 @@ public class ShooterService: MonoBehaviour
         SetShootersClickableStatus();
         shootTimer = 0f;
         isGameWon = false;
+        isGameLost = false;
         ResetStartingPositions();
     }
 
@@ -135,23 +137,27 @@ public class ShooterService: MonoBehaviour
         }
         if (activeShootersAtTargetPosition.Count==shooterPositions.Count)
         {
-            bool checkColor = true;
-            foreach(var item in  activeShootersAtTargetPosition)
+            if (isGameLost == false)
             {
-                if(GameService.Instance.BoxService.CheckEachFirstBox((int)item.ColorID)==false)
+                bool checkColor = true;
+                foreach (var item in activeShootersAtTargetPosition)
                 {
-                    checkColor = false;
+                    if (GameService.Instance.BoxService.CheckEachFirstBox((int)item.ColorID) == false)
+                    {
+                        checkColor = false;
+                    }
+                    else
+                    {
+                        checkColor = true;
+                        break;
+                    }
                 }
-                else
+                if (!checkColor)
                 {
-                    checkColor = true;
-                    break;
+                    isGameLost = true;
+                    inGameUIService.OnGameLost();
+                    return;
                 }
-            }
-            if(!checkColor)
-            {
-                inGameUIService.OnGameLost();
-                return;
             }
         }
     }

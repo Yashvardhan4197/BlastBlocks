@@ -43,6 +43,7 @@ public class InGameUIService : MonoBehaviour
 
     public void OpenGamePausedSection()
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.BUTTON_CLICK);
         inGameUIController.OpenPauseSection();
         isPaused = true;
     }
@@ -55,12 +56,14 @@ public class InGameUIService : MonoBehaviour
 
     public void OnGameWon()
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.GAME_WON);
         inGameUIController.SetGameWon();
         inGameUIController.OpenGameWonLostPopUp();
     }
 
     public void OnGameLost()
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.GAME_LOST);
         inGameUIController.SetGameLost();
         inGameUIController.OpenGameWonLostPopUp();
     }

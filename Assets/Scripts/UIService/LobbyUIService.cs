@@ -59,6 +59,7 @@ public class LobbyUIService: MonoBehaviour
 
     public void OnLevelButtonClicked(int levelNumber)
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.BUTTON_CLICK);
         GameService.Instance.LevelService.LoadScene(levelNumber);
     }
 

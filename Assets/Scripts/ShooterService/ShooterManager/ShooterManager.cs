@@ -81,6 +81,7 @@ public class ShooterManager:MonoBehaviour
             {
                 shooter.isClickable = false;
                 shooterService.AssignToShootingPosition(shooter);
+                GameService.Instance.SoundService.PlaySFX(Sound.PLAYER_CLICK);
             }
         }
     }

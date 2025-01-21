@@ -13,10 +13,12 @@ public class LobbyUIController
     public void OpenLevelSelectionMenu()
     {
         lobbyUIView.GetLevelSelectionMenu().SetActive(true);
+        GameService.Instance.SoundService.PlaySFX(Sound.BUTTON_CLICK);
     }
 
     public void ExitGame()
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.BUTTON_CLICK);
         Application.Quit();
     }
 

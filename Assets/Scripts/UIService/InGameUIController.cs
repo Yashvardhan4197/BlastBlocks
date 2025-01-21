@@ -49,16 +49,19 @@ public class InGameUIController
 
     public void OpenNextLevel()
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.BUTTON_CLICK);
         GameService.Instance.LevelService.LoadScene(GameService.Instance.LevelService.CurrentLevel + 1);
     }
 
     public void OpenLobby()
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.BUTTON_CLICK);
         GameService.Instance.LevelService.LoadScene(0);
     }
 
     public void RestartLevel()
     {
+        GameService.Instance.SoundService.PlaySFX(Sound.BUTTON_CLICK);
         GameService.Instance.LevelService.LoadScene(GameService.Instance.LevelService.CurrentLevel);
     }
 }
