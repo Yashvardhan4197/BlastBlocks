@@ -41,5 +41,4 @@ public class LobbyUIView:MonoBehaviour
 
     public GameObject GetLevelSelectionMenu() => LevelSelectionMenu;
 
-
 }

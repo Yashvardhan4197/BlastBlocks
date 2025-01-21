@@ -12,11 +12,12 @@ public class BoxService
     {
         boxPool = new BoxPool(boxPrefab,boxParentTransform);
         instantiatedBoxes=new Dictionary<Transform, List<BoxController>>();
+        GameService.Instance.StartGameAction += OnGameStart;
     }
 
     private void InitalizeBoxDict()
     {
-        boxPointPositions = GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].BoxPositionTransform;
+        boxPointPositions = GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel-1].BoxPositionTransform;
         for(int i=0;i<boxPointPositions.Count;i++)
         {
             instantiatedBoxes.Add(boxPointPositions[i],new List<BoxController>());
@@ -27,6 +28,13 @@ public class BoxService
     {
         if (instantiatedBoxes.Count > 0)
         {
+            foreach (var box in instantiatedBoxes.Values)
+            {
+                foreach (var item in box)
+                {
+                    item.ReturnToPool();
+                }
+            }
             instantiatedBoxes.Clear();
             
         }
@@ -38,22 +46,22 @@ public class BoxService
     {
         for (int i=0;i< boxPointPositions.Count; i++)
         {
-            for(int j = 0; j < GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Columns;j++)
+            for(int j = 0; j < GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel-1].Columns;j++)
             {
                 float currPosZ = boxPointPositions[i].position.z + j*1.1f;
                 BoxController newBox = boxPool.GetPooledItem();
                 newBox.ActivateBox(new Vector3(boxPointPositions[i].position.x,boxPointPositions[i].position.y,currPosZ));
                 instantiatedBoxes[boxPointPositions[i]].Add(newBox);
                 newBox.GetBoxMaterial().material.SetColor("_Color",Color.blue);
-                if (GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Layout[j].ID[i] == 0)
+                if (GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel - 1].Layout[j].ID[i] == 0)
                 {
                     newBox.GetBoxMaterial().material.SetColor("_Color", Color.red);
                     newBox.SetColorID(0);
-                }else if(GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Layout[j].ID[i] == 1)
+                }else if(GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel - 1].Layout[j].ID[i] == 1)
                 {
                     newBox.GetBoxMaterial().material.SetColor("_Color", Color.green);
                     newBox.SetColorID(1);
-                }else if(GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel].Layout[j].ID[i] == 2)
+                }else if(GameService.Instance.LevelDataSO[GameService.Instance.LevelService.CurrentLevel - 1].Layout[j].ID[i] == 2)
                 {
                     newBox.GetBoxMaterial().material.SetColor("_Color", Color.blue);
                     newBox.SetColorID(2);
@@ -127,13 +135,16 @@ public class BoxService
             }
         }
 
+    }
+
+    public bool CheckForWinCondition()
+    {
         bool checkEmpty = false;
         foreach (var item in instantiatedBoxes.Keys)
         {
-            Debug.Log(instantiatedBoxes[item].Count);
             if (instantiatedBoxes[item].Count <= 0)
             {
-                
+
                 checkEmpty = true;
             }
 
@@ -145,12 +156,9 @@ public class BoxService
         }
         if (checkEmpty)
         {
-            Debug.Log("GAME WON");
-            return;
+            return true;
         }
-
+        return false;
     }
-
-
 }
 

@@ -9,12 +9,13 @@ public class ShooterService: MonoBehaviour
     [SerializeField] Transform firstShooterPos;
     [SerializeField] BulletView BulletPrefab;
     [SerializeField] float shootInterval;
+    [SerializeField] InGameUIService inGameUIService;
     private Dictionary<Transform, bool> positionStatus;
     private List<ShooterManager> activeShootersAtTargetPosition;
     private ShooterManager activeShooter;
     private float shootTimer;
     private int currentActiveShooterIndex;
-
+    private bool isGameWon;
     private void Awake()
     {
         positionStatus = new Dictionary<Transform, bool>();
@@ -35,6 +36,7 @@ public class ShooterService: MonoBehaviour
     {
         SetShootersClickableStatus();
         shootTimer = 0f;
+        isGameWon = false;
         ResetStartingPositions();
     }
 
@@ -45,7 +47,6 @@ public class ShooterService: MonoBehaviour
         {
             if (shooter.IsMoving)
             {
-                Debug.Log("will move");
                 MoveToShootingPosition(shooter);
                 if(shooter.IsMoving==false&&shooter.IsAtShootingPosition==true)
                 {
@@ -74,8 +75,12 @@ public class ShooterService: MonoBehaviour
             }
             else
             {
-                currentActiveShooterIndex = (currentActiveShooterIndex + 1)%activeShootersAtTargetPosition.Count;
-                activeShooter = activeShootersAtTargetPosition[currentActiveShooterIndex];
+                if (activeShootersAtTargetPosition.Count <= 0) { activeShooter = null; }
+                else 
+                {
+                    currentActiveShooterIndex = (currentActiveShooterIndex + 1) % activeShootersAtTargetPosition.Count;
+                    activeShooter = activeShootersAtTargetPosition[currentActiveShooterIndex];
+                }
             }
         }
         shootersToRemove.Clear();
@@ -83,13 +88,24 @@ public class ShooterService: MonoBehaviour
         {
             if(activeShooter.CurrentBullets<=0)
             {
-                shootersToRemove.Add(activeShooter);
+
                 positionStatus[activeShooter.TargetShooterPosition] = false;
+                activeShootersAtTargetPosition.Remove(activeShooter);
                 activeShooter.SetIsAtShootingPosition(false);
                 activeShooter.UpdateBullets(0);
                 activeShooter.SetTargetShootingPosition(null);
                 SetShootersClickableStatus();
                 activeShooter.gameObject.SetActive(false);
+                if (activeShootersAtTargetPosition.Count > 0)
+                {
+                    activeShooter = activeShootersAtTargetPosition[0];
+                    currentActiveShooterIndex = 0;
+                }
+                else
+                {
+                    activeShooter = null;
+                }
+
             }
         }
         foreach(var shooter in shootersToRemove)
@@ -107,7 +123,17 @@ public class ShooterService: MonoBehaviour
 
     private void CheckForGameLossStatus()
     {
-        if(activeShootersAtTargetPosition.Count==shooterPositions.Count)
+        if (GameService.Instance.BoxService.CheckForWinCondition())
+        {
+            if (isGameWon == false)
+            {
+                GameService.Instance.LevelService.SetCurrentLevelStatusCompleted();
+                isGameWon = true;
+                inGameUIService.OnGameWon();
+            }
+            return;
+        }
+        if (activeShootersAtTargetPosition.Count==shooterPositions.Count)
         {
             bool checkColor = true;
             foreach(var item in  activeShootersAtTargetPosition)
@@ -124,7 +150,8 @@ public class ShooterService: MonoBehaviour
             }
             if(!checkColor)
             {
-                Debug.Log("GAME LOST");
+                inGameUIService.OnGameLost();
+                return;
             }
         }
     }

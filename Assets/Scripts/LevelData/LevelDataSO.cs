@@ -34,10 +34,30 @@ public class LevelDataSO: ScriptableObject
 
     private void OnValidate()
     {
-        if(columns!=previousColumns)
+        if (columns != previousColumns)
         {
             previousColumns = columns;
-            ResetBoxDataContainer();
+            BoxDataContainer[] newLayout = new BoxDataContainer[columns];
+
+            for (int i = 0; i < columns; i++)
+            {
+                if (i < layout?.Length)
+                {
+                    newLayout[i] = layout[i];
+                }
+                else
+                {
+                    newLayout[i] = new BoxDataContainer(boxPositionTransform.Count);
+                }
+            }
+            layout = newLayout;
+            foreach (var box in layout)
+            {
+                if (box.ID.Length != boxPositionTransform.Count)
+                {
+                    Array.Resize(ref box.ID, boxPositionTransform.Count);
+                }
+            }
         }
     }
 

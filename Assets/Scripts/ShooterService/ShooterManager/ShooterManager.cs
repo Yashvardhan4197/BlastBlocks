@@ -52,21 +52,37 @@ public class ShooterManager:MonoBehaviour
     private void Update()
     {
         
+
+
         if(Input.GetMouseButtonDown(0)&& !EventSystem.current.IsPointerOverGameObject())
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (!EventSystem.current.IsPointerOverGameObject()&&Physics.Raycast(ray,out RaycastHit hit)) 
-            {
-                ShooterManager shooter = hit.collider.GetComponent<ShooterManager>();
+            HandleInput(Input.mousePosition);
+        }
 
-                if (shooter != null && shooter.isClickable)
-                {
-                    shooter.isClickable = false;
-                    shooterService.AssignToShootingPosition(shooter);
-                }
+        if(Input.touchCount>0)
+        {
+            Touch touch=Input.GetTouch(0);
+            if(touch.phase==TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject())
+            {
+                HandleInput(touch.position);
             }
         }
 
+    }
+
+    private void HandleInput(Vector3 position)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(position);
+        if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out RaycastHit hit))
+        {
+            ShooterManager shooter = hit.collider.GetComponent<ShooterManager>();
+
+            if (shooter != null && shooter.isClickable)
+            {
+                shooter.isClickable = false;
+                shooterService.AssignToShootingPosition(shooter);
+            }
+        }
     }
 
     public void SetIsClickable(bool isClickable)
